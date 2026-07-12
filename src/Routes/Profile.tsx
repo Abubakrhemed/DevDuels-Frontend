@@ -1,6 +1,6 @@
 import { Navbar } from "../components/Navbar";
 
-export function Home() {
+export function Profile() {
   return (
     <div><Navbar/></div>
   )

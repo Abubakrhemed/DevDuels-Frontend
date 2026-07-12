@@ -1,5 +1,7 @@
+import { Navbar } from "../components/Navbar";
+
 export function Leaderboard() {
   return (
-    <div>Leaderboard</div>
+    <div><Navbar/></div>
   )
 }

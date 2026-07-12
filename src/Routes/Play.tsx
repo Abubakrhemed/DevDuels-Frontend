@@ -1,5 +1,7 @@
+import { Navbar } from "../components/Navbar";
+
 export function Play() {
   return (
-    <div>Play</div>
+    <div><Navbar/></div>
   )
 }

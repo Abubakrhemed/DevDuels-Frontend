@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import {App} from "./App";
 import "./index.css";
-import { Game, Home, Leaderboard, Play, Lobby, AllGames } from "./Routes/pages";
+import { Game, Home, Leaderboard, Play, Lobby, AllGames,Profile } from "./Routes/pages";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +13,7 @@ const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "home", Component: Home },
       { path: "leaderboard", Component: Leaderboard },
+      { path: "profile", Component: Profile },
       {
         path: "play",
         Component: Play,
