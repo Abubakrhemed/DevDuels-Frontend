@@ -1,13 +1,75 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --bg: #0e1116;
+  --surface: #161b22;
+  --surface-hover: #1c232d;
+  --border: #232a34;
+  --text: #e6edf3;
+  --muted: #8b96a5;
+  --accent: #5cc8c2;
+  --accent-soft: #1f3a3a;
+  --danger: #e5534b;
+  --danger-soft: #3a2220;
+}
 
-@layer components {
-    .nav-links{
-      font-size: var(--text-xl)
-    }
+.light {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-hover: #eef1f4;
+  --border: #dde1e6;
+  --text: #12161c;
+  --muted: #5b6572;
+  --accent: #128f86;
+  --accent-soft: #d8f0ee;
+  --danger: #b3362e;
+  --danger-soft: #fbe4e2;
+}
 
-    .nav-links:hover{
-      cursor: pointer;
-      color: var(--color-blue-800);
-    }
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-display: "JetBrains Mono", monospace;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .hero-cursor {
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cursor {
+    animation: none;
+  }
 }

@@ -1,7 +1,9 @@
-import { Navbar } from "../components/Navbar";
+import { Navbar, Hero, Footer } from "../components/components";
 
 export function Home() {
   return (
-    <div><Navbar/></div>
-  )
+    <div>
+      <Hero />
+    </div>
+  );
 }
