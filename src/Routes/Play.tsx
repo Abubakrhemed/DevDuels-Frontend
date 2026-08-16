@@ -1,5 +1,9 @@
+import { Outlet } from "react-router";
+
 export function Play() {
   return (
-    <div></div>
-  )
+    <div className="min-h-[60vh]">
+      <Outlet />
+    </div>
+  );
 }
