@@ -1,3 +1,5 @@
+import { CreateGameButton } from "../components/CreateGameButton";
+
 interface PublicLobby {
   roomId: string;
   hostUsername: string;
@@ -26,9 +28,7 @@ export function AllGames() {
             jump into an open game or start your own
           </p>
         </div>
-        <button className="rounded-md bg-accent px-5 py-2.5 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90">
-          create game
-        </button>
+        <CreateGameButton/>
       </div>
 
       <div className="mt-6 flex flex-col gap-3 rounded-lg border border-border bg-surface p-4 sm:flex-row sm:items-center">
