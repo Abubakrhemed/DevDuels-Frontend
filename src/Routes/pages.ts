@@ -7,3 +7,5 @@ export * from "./Play";
 export * from "./Home";
 export * from "./AllGames";
 export * from "./Profile";
+export * from "./Login"
+export * from "./Register"
