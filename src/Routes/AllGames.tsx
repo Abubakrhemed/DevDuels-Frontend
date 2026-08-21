@@ -1,22 +1,31 @@
+import { useEffect, useState } from "react";
 import { CreateGameButton } from "../components/CreateGameButton";
-
-interface PublicLobby {
-  roomId: string;
-  hostUsername: string;
-  playerCount: number;
-  maxPlayers: number;
-}
-
-const mockLobbies: PublicLobby[] = [
-  { roomId: "8f3a1c", hostUsername: "player_01", playerCount: 2, maxPlayers: 4 },
-  { roomId: "b92e40", hostUsername: "codeCrusher", playerCount: 1, maxPlayers: 4 },
-  { roomId: "1d77aa", hostUsername: "nullPointerX", playerCount: 3, maxPlayers: 4 },
-  { roomId: "5e0c9f", hostUsername: "stackOverflowed", playerCount: 1, maxPlayers: 4 },
-  { roomId: "2a44b7", hostUsername: "segfault_sam", playerCount: 4, maxPlayers: 4 },
-  { roomId: "9c1123", hostUsername: "player_09", playerCount: 2, maxPlayers: 4 },
-];
+import { devDuelsService } from "../services/DevDuelsService";
+import type { PublicLobbySummary } from "../hooks/types/lobby";
 
 export function AllGames() {
+  const [lobbies, setLobbies] = useState<PublicLobbySummary[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function getLobbies() {
+      try {
+        const response = await devDuelsService.getAllPublicLobbies();
+        if (response.status === "ok") {
+          setLobbies(response.lobbies);
+        } else {
+          console.error(response.message);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getLobbies();
+  }, []);
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -28,7 +37,7 @@ export function AllGames() {
             jump into an open game or start your own
           </p>
         </div>
-        <CreateGameButton/>
+        <CreateGameButton />
       </div>
 
       <div className="mt-6 flex flex-col gap-3 rounded-lg border border-border bg-surface p-4 sm:flex-row sm:items-center">
@@ -52,7 +61,13 @@ export function AllGames() {
         </div>
       </div>
 
-      {mockLobbies.length === 0 ? (
+      {isLoading ? (
+        <div className="mt-8 rounded-lg border border-border bg-surface p-10 text-center">
+          <p className="font-display text-sm text-muted">
+            loading lobbies...
+          </p>
+        </div>
+      ) : lobbies.length === 0 ? (
         <div className="mt-8 rounded-lg border border-border bg-surface p-10 text-center">
           <p className="font-display text-sm text-muted">
             no public lobbies right now
@@ -63,7 +78,7 @@ export function AllGames() {
         </div>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {mockLobbies.map((lobby) => (
+          {lobbies.map((lobby) => (
             <div
               key={lobby.roomId}
               className="flex flex-col justify-between rounded-lg border border-border bg-surface p-5"
@@ -71,15 +86,12 @@ export function AllGames() {
               <div>
                 <div className="flex items-center justify-between">
                   <span className="font-display text-sm font-medium text-text">
-                    {lobby.hostUsername}
+                    room {lobby.roomId}
                   </span>
                   <span className="rounded-full border border-border px-2 py-0.5 font-display text-xs text-muted">
                     {lobby.playerCount}/{lobby.maxPlayers}
                   </span>
                 </div>
-                <p className="mt-2 font-display text-xs text-muted">
-                  room {lobby.roomId}
-                </p>
               </div>
               <button className="mt-5 rounded-md bg-accent px-4 py-2 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90">
                 join game
