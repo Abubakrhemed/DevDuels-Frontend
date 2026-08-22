@@ -1,3 +1,5 @@
+export type LobbyPrivacy = "PUBLIC" | "PRIVATE";
+
 export interface Player {
   userId: string;
   username: string;
@@ -8,7 +10,7 @@ export interface Player {
 export interface Lobby {
   roomId: string;
   players: [string, Player][];
-  privacy: "PUBLIC" | "PRIVATE";
+  privacy: LobbyPrivacy;
   maxPlayers: number;
   minPlayers: number;
   password?: string;

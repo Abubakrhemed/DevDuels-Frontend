@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { CreateGameButton } from "../components/CreateGameButton";
 import { devDuelsService } from "../services/DevDuelsService";
-import type { PublicLobbySummary } from "../hooks/types/lobby";
+import { socket } from "../socket/socket";
+import type { PublicLobbySummary } from "../types/lobby";
 
 export function AllGames() {
   const [lobbies, setLobbies] = useState<PublicLobbySummary[]>([]);
@@ -24,6 +25,20 @@ export function AllGames() {
     }
 
     getLobbies();
+  }, []);
+
+  useEffect(() => {
+    function handlePublicListChanged(payload: {
+      lobbies: PublicLobbySummary[];
+    }) {
+      setLobbies(payload.lobbies);
+    }
+
+    socket.on("lobby:publicListChanged", handlePublicListChanged);
+
+    return () => {
+      socket.off("lobby:publicListChanged", handlePublicListChanged);
+    };
   }, []);
 
   return (

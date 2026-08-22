@@ -1,4 +1,9 @@
+import { io, Socket } from "socket.io-client";
 import { BASE_URI } from "../config/config";
-import { io } from "socket.io-client";
+import type {
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "../types/socketEvents";
 
-export const socket = io(`${BASE_URI}`)
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
+  io(BASE_URI);

@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { ChangeLobbyPrivacy } from "../components/ChangeLobbyPrivacy";
+import type { Lobby as LobbyType } from "../types/lobby";
+
 interface LobbyPlayer {
   userId: string;
   username: string;
@@ -19,7 +23,21 @@ const mockMessages: LobbyMessage[] = [
   { id: "m2", text: "player_02 joined the lobby" },
 ];
 
+function getStoredLobby(): LobbyType | null {
+  const stored = localStorage.getItem("activeLobby");
+  return stored ? (JSON.parse(stored) as LobbyType) : null;
+}
+
 export function Lobby() {
+  const [lobby, setLobby] = useState<LobbyType | null>(() =>
+    getStoredLobby()
+  );
+
+  function handleLobbyUpdate(updated: LobbyType) {
+    setLobby(updated);
+    localStorage.setItem("activeLobby", JSON.stringify(updated));
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
       <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:flex-row sm:items-center">
@@ -28,16 +46,21 @@ export function Lobby() {
             lobby
           </h1>
           <p className="mt-1 font-display text-xs text-muted">
-            room 8f3a1c · private
+            room {lobby?.roomId ?? "unknown"} ·{" "}
+            {lobby?.privacy === "PRIVATE" ? "private" : "public"}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <div className="rounded-md border border-border bg-surface px-4 py-2 font-display text-xs text-muted">
-            password <span className="text-text">4kd9</span>
-          </div>
+          {lobby?.privacy === "PRIVATE" && lobby.password && (
+            <div className="rounded-md border border-border bg-surface px-4 py-2 font-display text-xs text-muted">
+              password <span className="text-text">{lobby.password}</span>
+            </div>
+          )}
           <button className="rounded-md border border-border px-4 py-2 font-display text-xs text-text transition-colors hover:border-accent hover:text-accent">
             copy invite
           </button>
+
+          <ChangeLobbyPrivacy lobby={lobby} onUpdate={handleLobbyUpdate} />
         </div>
       </div>
 

@@ -16,6 +16,7 @@ export function CreateGameButton() {
       const response = await devDuelsService.createLobby(user._id);
       if (response.status === "ok") {
         navigate("/play/lobby", { state: { lobby: response.lobby } });
+        localStorage.setItem("activeLobby", JSON.stringify(response.lobby));
       } else {
         console.error(response.message);
       }

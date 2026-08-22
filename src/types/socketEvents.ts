@@ -1,5 +1,5 @@
-import type { SocketResponse } from "./socket";
-import type { Lobby, Player, PublicLobbySummary } from "./lobby";
+import type { SocketResponse } from "./socketResponse";
+import type { Lobby, LobbyPrivacy, Player, PublicLobbySummary } from "./lobby";
 
 export type LobbyCreateResponse = SocketResponse<{
   roomId: string;
@@ -10,6 +10,10 @@ export type LobbyFetchResponse = SocketResponse<{
   lobbies: PublicLobbySummary[];
 }>;
 
+export type LobbyPrivacyChangeResponse = SocketResponse<{
+  lobby: Lobby;
+}>;
+
 export interface ClientToServerEvents {
   "lobby:create": (
     playerId: string,
@@ -18,9 +22,18 @@ export interface ClientToServerEvents {
   "lobby:getPublic": (
     callback: (response: LobbyFetchResponse) => void
   ) => void;
+  "lobby:privacyChange": (
+    roomId: string,
+    playerId: string,
+    privacyUpdate: LobbyPrivacy,
+    callback: (response: LobbyPrivacyChangeResponse) => void
+  ) => void;
 }
 
 export interface ServerToClientEvents {
   "lobby:playerJoined": (payload: { player: Player }) => void;
   "lobby:playerLeft": (payload: { username: string }) => void;
+  "lobby:publicListChanged": (payload: {
+    lobbies: PublicLobbySummary[];
+  }) => void;
 }
