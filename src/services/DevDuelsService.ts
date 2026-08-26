@@ -3,8 +3,9 @@ import type {
   LobbyCreateResponse,
   LobbyFetchResponse,
   LobbyPrivacyChangeResponse,
+  LobbyLeaveResponse
 } from "../types/socketEvents";
-import type { LobbyPrivacy } from "../types/lobby";
+import type { LobbyPrivacy } from "../types/Lobby";
 
 export const devDuelsService = {
   createLobby(playerId: string) {
@@ -13,6 +14,10 @@ export const devDuelsService = {
 
   getAllPublicLobbies() {
     return socketRequest<LobbyFetchResponse>("lobby:getPublic");
+  },
+
+  leaveLobby(roomId:string,playerid:string) {
+    return socketRequest<LobbyLeaveResponse>("lobby:dissconnect",roomId,playerid)
   },
 
   updateLobbyPrivacy(

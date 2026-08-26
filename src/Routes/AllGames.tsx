@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CreateGameButton } from "../components/CreateGameButton";
 import { devDuelsService } from "../services/DevDuelsService";
 import { socket } from "../socket/socket";
-import type { PublicLobbySummary } from "../types/lobby";
+import type { PublicLobbySummary } from "../types/Lobby";
 
 export function AllGames() {
   const [lobbies, setLobbies] = useState<PublicLobbySummary[]>([]);

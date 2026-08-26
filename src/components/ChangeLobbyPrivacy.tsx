@@ -2,7 +2,7 @@ import { useState } from "react";
 import { devDuelsService } from "../services/DevDuelsService";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router";
-import type { Lobby } from "../types/lobby";
+import type { Lobby } from "../types/Lobby";
 
 interface ChangeLobbyPrivacyProps {
   lobby: Lobby | null;

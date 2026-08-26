@@ -1,5 +1,5 @@
 import type { SocketResponse } from "./socketResponse";
-import type { Lobby, LobbyPrivacy, Player, PublicLobbySummary } from "./lobby";
+import type { Lobby, LobbyPrivacy, Player, PublicLobbySummary } from "./Lobby";
 
 export type LobbyCreateResponse = SocketResponse<{
   roomId: string;
@@ -13,6 +13,11 @@ export type LobbyFetchResponse = SocketResponse<{
 export type LobbyPrivacyChangeResponse = SocketResponse<{
   lobby: Lobby;
 }>;
+
+export type LobbyLeaveResponse = SocketResponse<{
+  status: string;
+  message: string;
+}>
 
 export interface ClientToServerEvents {
   "lobby:create": (
