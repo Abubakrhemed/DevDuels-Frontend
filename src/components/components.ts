@@ -4,3 +4,4 @@ export * from "./Hero";
 export * from "./CreateGameButton"
 export * from "./LeaveLobbyButton"
 export * from "./ChangeLobbyPrivacy"
+export * from "./JoinLobbyButton"

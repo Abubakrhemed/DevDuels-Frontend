@@ -15,9 +15,12 @@ export type LobbyPrivacyChangeResponse = SocketResponse<{
 }>;
 
 export type LobbyLeaveResponse = SocketResponse<{
-  status: string;
   message: string;
-}>
+}>;
+
+export type JoinLobbyResponse = SocketResponse<{
+  lobby: Lobby;
+}>;
 
 export interface ClientToServerEvents {
   "lobby:create": (
@@ -32,6 +35,17 @@ export interface ClientToServerEvents {
     playerId: string,
     privacyUpdate: LobbyPrivacy,
     callback: (response: LobbyPrivacyChangeResponse) => void
+  ) => void;
+  "lobby:join": (
+    roomId: string,
+    playerid: string,
+    password: string,
+    callback: (response: JoinLobbyResponse) => void
+  ) => void;
+  "lobby:dissconnect": (
+    roomId: string,
+    playerid: string,
+    callback: (response: LobbyLeaveResponse) => void
   ) => void;
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { CreateGameButton } from "../components/CreateGameButton";
+import type { ChangeEvent } from "react";
+import { CreateGameButton, JoinLobbyButton } from "../components/components";
 import { devDuelsService } from "../services/DevDuelsService";
 import { socket } from "../socket/socket";
 import type { PublicLobbySummary } from "../types/Lobby";
@@ -7,6 +8,16 @@ import type { PublicLobbySummary } from "../types/Lobby";
 export function AllGames() {
   const [lobbies, setLobbies] = useState<PublicLobbySummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [roomIdInput, setRoomIdInput] = useState("");
+
+  function updatePassword(event: ChangeEvent<HTMLInputElement>) {
+    setPasswordInput(event.target.value);
+  }
+
+  function updateRoomId(event: ChangeEvent<HTMLInputElement>) {
+    setRoomIdInput(event.target.value);
+  }
 
   useEffect(() => {
     async function getLobbies() {
@@ -63,16 +74,18 @@ export function AllGames() {
           <input
             type="text"
             placeholder="room id"
+            value={roomIdInput}
+            onChange={updateRoomId}
             className="w-full rounded-md border border-border bg-bg px-3 py-2 font-display text-sm text-text placeholder:text-muted focus:border-accent"
           />
           <input
             type="password"
             placeholder="password"
+            value={passwordInput}
+            onChange={updatePassword}
             className="w-full rounded-md border border-border bg-bg px-3 py-2 font-display text-sm text-text placeholder:text-muted focus:border-accent sm:w-40"
           />
-          <button className="shrink-0 rounded-md border border-border px-5 py-2 font-display text-sm text-text transition-colors hover:border-accent hover:text-accent">
-            join
-          </button>
+          <JoinLobbyButton roomId={roomIdInput} password={passwordInput} />
         </div>
       </div>
 
@@ -108,9 +121,7 @@ export function AllGames() {
                   </span>
                 </div>
               </div>
-              <button className="mt-5 rounded-md bg-accent px-4 py-2 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90">
-                join game
-              </button>
+              <JoinLobbyButton roomId={lobby.roomId} variant="primary" />
             </div>
           ))}
         </div>
