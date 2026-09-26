@@ -1,5 +1,11 @@
 import type { SocketResponse } from "./socketResponse";
 import type { Lobby, LobbyPrivacy, Player, PublicLobbySummary } from "./Lobby";
+import type {
+  SafeQuestion,
+  GameStatePayload,
+  GameOverPayload,
+  GameEndPayload,
+} from "./game";
 
 export type LobbyCreateResponse = SocketResponse<{
   roomId: string;
@@ -22,6 +28,19 @@ export type JoinLobbyResponse = SocketResponse<{
   lobby: Lobby;
 }>;
 
+export type LobbyGetCurrentResponse = SocketResponse<{
+  lobby: Lobby;
+}>;
+
+export type GameAckResponse = SocketResponse<Record<string, never>>;
+
+export interface OpponentUpdate {
+  userId: string;
+  username: string;
+  score: number;
+  lives: number;
+}
+
 export interface ClientToServerEvents {
   "lobby:create": (
     playerId: string,
@@ -29,6 +48,10 @@ export interface ClientToServerEvents {
   ) => void;
   "lobby:getPublic": (
     callback: (response: LobbyFetchResponse) => void
+  ) => void;
+  "lobby:getCurrent": (
+    roomId: string,
+    callback: (response: LobbyGetCurrentResponse) => void
   ) => void;
   "lobby:privacyChange": (
     roomId: string,
@@ -47,6 +70,21 @@ export interface ClientToServerEvents {
     playerid: string,
     callback: (response: LobbyLeaveResponse) => void
   ) => void;
+  "game:begin": (
+    roomId: string,
+    callback: (response: GameAckResponse) => void
+  ) => void;
+  "game:start": (
+    roomId: string,
+    playerid: string,
+    callback?: (response: GameAckResponse) => void
+  ) => void;
+  "game:answerSubmited": (
+    answer: string,
+    playerid: string,
+    roomId: string,
+    callback?: (response: GameAckResponse) => void
+  ) => void;
 }
 
 export interface ServerToClientEvents {
@@ -55,4 +93,14 @@ export interface ServerToClientEvents {
   "lobby:publicListChanged": (payload: {
     lobbies: PublicLobbySummary[];
   }) => void;
+  "game:started": () => void;
+  "game:questionSent": (
+    question: SafeQuestion,
+    state?: GameStatePayload
+  ) => void;
+  "game:opponentUpdate": (payload: OpponentUpdate) => void;
+  "game:over": (payload: GameOverPayload) => void;
+  "game:end": (payload: GameEndPayload) => void;
+  "game:returnToLobby": () => void;
+  "game:error": (message: string) => void;
 }

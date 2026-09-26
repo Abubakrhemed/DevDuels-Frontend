@@ -1,5 +1,5 @@
 // src/pages/index.ts
-export * from "./Game";
+export * from "../types/game";
 export * from "./Lobby";
 export * from "./Home";
 export * from "./Leaderboard";
@@ -9,3 +9,4 @@ export * from "./AllGames";
 export * from "./Profile";
 export * from "./Login"
 export * from "./Register"
+export * from "./Game"

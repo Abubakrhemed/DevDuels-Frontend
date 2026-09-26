@@ -42,6 +42,10 @@ export function ChangeLobbyPrivacy({
         onUpdate(response.lobby);
       } else {
         console.error(response.message);
+        if (response.message === "lobby not found") {
+          localStorage.removeItem("activeLobby");
+          navigate("/play");
+        }
       }
     } catch (error) {
       console.error(error);

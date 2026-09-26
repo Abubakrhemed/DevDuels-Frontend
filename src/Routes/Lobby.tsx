@@ -1,23 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { ChangeLobbyPrivacy, LeaveLobbyButton } from "../components/components";
+import { devDuelsService } from "../services/DevDuelsService";
 import { socket } from "../socket/socket";
+import { useAuth } from "../hooks/useAuth";
+import { usePopup } from "../hooks/Usepopup";
 import type { Lobby as LobbyType, Player } from "../types/Lobby";
-
-interface LobbyPlayer {
-  userId: string;
-  username: string;
-  isHost: boolean;
-}
 
 interface LobbyMessage {
   id: string;
   text: string;
 }
-
-const mockPlayers: LobbyPlayer[] = [
-  { userId: "1", username: "player_01", isHost: true },
-  { userId: "2", username: "player_02", isHost: false },
-];
 
 function getStoredLobby(): LobbyType | null {
   const stored = localStorage.getItem("activeLobby");
@@ -25,10 +18,12 @@ function getStoredLobby(): LobbyType | null {
 }
 
 export function Lobby() {
-  const [lobby, setLobby] = useState<LobbyType | null>(() =>
-    getStoredLobby()
-  );
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { showPopup } = usePopup();
+  const [lobby, setLobby] = useState<LobbyType | null>(() => getStoredLobby());
   const [messages, setMessages] = useState<LobbyMessage[]>([]);
+  const [starting, setStarting] = useState(false);
 
   function handleLobbyUpdate(updated: LobbyType) {
     setLobby(updated);
@@ -36,7 +31,53 @@ export function Lobby() {
   }
 
   useEffect(() => {
+    const cached = getStoredLobby();
+    if (!cached) {
+      navigate("/play");
+      return;
+    }
+
+    async function refreshLobby() {
+      try {
+        const response = await devDuelsService.getCurrentLobby(cached!.roomId);
+
+        if (response.status === "ok") {
+          const isMember = response.lobby.players.some(
+            ([playerId]) => playerId === user?._id
+          );
+
+          if (!isMember) {
+            localStorage.removeItem("activeLobby");
+            navigate("/play");
+            return;
+          }
+
+          handleLobbyUpdate(response.lobby);
+        } else {
+          localStorage.removeItem("activeLobby");
+          navigate("/play");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    refreshLobby();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     function handlePlayerJoined(payload: { player: Player }) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        const updated: LobbyType = {
+          ...prev,
+          players: [...prev.players, [payload.player.userId, payload.player]],
+        };
+        localStorage.setItem("activeLobby", JSON.stringify(updated));
+        return updated;
+      });
+
       setMessages((prev) => [
         ...prev,
         {
@@ -47,6 +88,18 @@ export function Lobby() {
     }
 
     function handlePlayerLeft(payload: { username: string }) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        const updated: LobbyType = {
+          ...prev,
+          players: prev.players.filter(
+            ([, player]) => player.username !== payload.username
+          ),
+        };
+        localStorage.setItem("activeLobby", JSON.stringify(updated));
+        return updated;
+      });
+
       setMessages((prev) => [
         ...prev,
         {
@@ -56,14 +109,39 @@ export function Lobby() {
       ]);
     }
 
+    function handleGameStarted() {
+      navigate("/play/game");
+    }
+
     socket.on("lobby:playerJoined", handlePlayerJoined);
     socket.on("lobby:playerLeft", handlePlayerLeft);
+    socket.on("game:started", handleGameStarted);
 
     return () => {
       socket.off("lobby:playerJoined", handlePlayerJoined);
       socket.off("lobby:playerLeft", handlePlayerLeft);
+      socket.off("game:started", handleGameStarted);
     };
   }, []);
+
+  async function handleStartGame() {
+    if (!lobby) return;
+
+    setStarting(true);
+    try {
+      const response = await devDuelsService.beginGame(lobby.roomId);
+      if (response.status !== "ok") {
+        showPopup(response.message, "error");
+        setStarting(false);
+      }
+    } catch (error) {
+      console.error(error);
+      showPopup("could not start the game, try again", "error");
+      setStarting(false);
+    }
+  }
+
+  const players = lobby?.players ?? [];
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
@@ -94,30 +172,29 @@ export function Lobby() {
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="rounded-lg border border-border bg-surface p-5">
           <h2 className="font-display text-xs uppercase tracking-wider text-muted">
-            players 2/4
+            players {players.length}/{lobby?.maxPlayers ?? 4}
           </h2>
           <div className="mt-4 flex flex-col gap-3">
-            {mockPlayers.map((player) => (
+            {players.map(([userId, player]) => (
               <div
-                key={player.userId}
+                key={userId}
                 className="flex items-center justify-between rounded-md border border-border bg-bg px-4 py-3"
               >
                 <span className="font-display text-sm text-text">
                   {player.username}
                 </span>
-                {player.isHost && (
-                  <span className="rounded-full border border-accent px-2 py-0.5 font-display text-xs text-accent">
-                    host
-                  </span>
-                )}
               </div>
             ))}
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <LeaveLobbyButton lobby={lobby} />
-            <button className="rounded-md bg-accent px-6 py-2.5 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90">
-              start game
+            <button
+              onClick={handleStartGame}
+              disabled={starting}
+              className="rounded-md bg-accent px-6 py-2.5 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {starting ? "starting..." : "start game"}
             </button>
           </div>
         </div>
@@ -128,15 +205,10 @@ export function Lobby() {
           </h2>
           <div className="mt-4 flex flex-col gap-2">
             {messages.length === 0 ? (
-              <p className="font-display text-xs text-muted">
-                no activity yet
-              </p>
+              <p className="font-display text-xs text-muted">no activity yet</p>
             ) : (
               messages.map((message) => (
-                <p
-                  key={message.id}
-                  className="font-display text-xs text-muted"
-                >
+                <p key={message.id} className="font-display text-xs text-muted">
                   {message.text}
                 </p>
               ))

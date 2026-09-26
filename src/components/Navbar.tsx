@@ -2,13 +2,36 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
+import { devDuelsService } from "../services/DevDuelsService";
+import type { Lobby } from "../types/Lobby";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  function handleLogout() {
+  async function leaveActiveLobby() {
+    const stored = localStorage.getItem("activeLobby");
+    if (!stored || !user) return;
+
+    try {
+      const lobby = JSON.parse(stored) as Lobby;
+      await devDuelsService.leaveLobby(lobby.roomId, user._id);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.removeItem("activeLobby");
+    }
+  }
+
+  async function handleNavigate(to: string) {
+    setIsOpen(false);
+    await leaveActiveLobby();
+    navigate(to);
+  }
+
+  async function handleLogout() {
+    await leaveActiveLobby();
     logout();
     navigate("/");
   }
@@ -147,31 +170,34 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-2">
+        <button
+          onClick={() => handleNavigate("/")}
+          className="flex items-center gap-2"
+        >
           <span className="font-display text-lg font-bold text-text">
             dev<span className="text-accent">duels</span>
           </span>
-        </Link>
+        </button>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link
-            to="/"
+          <button
+            onClick={() => handleNavigate("/")}
             className="font-display text-sm text-muted transition-colors hover:text-text"
           >
             home
-          </Link>
-          <Link
-            to="/play"
+          </button>
+          <button
+            onClick={() => handleNavigate("/play")}
             className="font-display text-sm text-muted transition-colors hover:text-text"
           >
             play
-          </Link>
-          <Link
-            to="/leaderboard"
+          </button>
+          <button
+            onClick={() => handleNavigate("/leaderboard")}
             className="font-display text-sm text-muted transition-colors hover:text-text"
           >
             leaderboard
-          </Link>
+          </button>
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -224,27 +250,24 @@ export function Navbar() {
       {isOpen && (
         <div className="border-t border-border px-6 py-4 md:hidden">
           <nav className="flex flex-col gap-4">
-            <Link
-              to="/"
-              onClick={() => setIsOpen(false)}
-              className="font-display text-sm text-muted transition-colors hover:text-text"
+            <button
+              onClick={() => handleNavigate("/")}
+              className="text-left font-display text-sm text-muted transition-colors hover:text-text"
             >
               home
-            </Link>
-            <Link
-              to="/play"
-              onClick={() => setIsOpen(false)}
-              className="font-display text-sm text-muted transition-colors hover:text-text"
+            </button>
+            <button
+              onClick={() => handleNavigate("/play")}
+              className="text-left font-display text-sm text-muted transition-colors hover:text-text"
             >
               play
-            </Link>
-            <Link
-              to="/leaderboard"
-              onClick={() => setIsOpen(false)}
-              className="font-display text-sm text-muted transition-colors hover:text-text"
+            </button>
+            <button
+              onClick={() => handleNavigate("/leaderboard")}
+              className="text-left font-display text-sm text-muted transition-colors hover:text-text"
             >
               leaderboard
-            </Link>
+            </button>
             <div className="mt-2 flex flex-col gap-3 border-t border-border pt-4">
               <button
                 onClick={handleLogout}

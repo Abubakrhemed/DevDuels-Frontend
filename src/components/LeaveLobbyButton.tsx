@@ -26,8 +26,8 @@ export function LeaveLobbyButton({ lobby }: LeaveLobbyProps) {
       const response = await devDuelsService.leaveLobby(lobby.roomId, user._id);
 
       if (response.status === "ok") {
-        navigate("/play")
-        
+        localStorage.removeItem("activeLobby");
+        navigate("/play");
       } else {
         console.error(response.message);
       }

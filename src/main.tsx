@@ -12,9 +12,10 @@ import {
   AllGames,
   Profile,
   Login,
-  Register
+  Register,
 } from "./Routes/pages";
 import { AuthProvider } from "./context/AuthProvider";
+import { PopupProvider } from "./context/PopupProvider";
 
 const router = createBrowserRouter([
   { path: "login", Component: Login },
@@ -44,6 +45,8 @@ const root = document.getElementById("root")!;
 
 ReactDOM.createRoot(root).render(
   <AuthProvider>
-    <RouterProvider router={router} />
+    <PopupProvider>
+      <RouterProvider router={router} />
+    </PopupProvider>
   </AuthProvider>,
 );

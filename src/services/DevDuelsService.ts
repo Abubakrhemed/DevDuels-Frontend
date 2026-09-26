@@ -4,7 +4,9 @@ import type {
   LobbyFetchResponse,
   LobbyPrivacyChangeResponse,
   LobbyLeaveResponse,
-  JoinLobbyResponse
+  JoinLobbyResponse,
+  LobbyGetCurrentResponse,
+  GameAckResponse,
 } from "../types/socketEvents";
 import type { LobbyPrivacy } from "../types/Lobby";
 
@@ -17,12 +19,25 @@ export const devDuelsService = {
     return socketRequest<LobbyFetchResponse>("lobby:getPublic");
   },
 
-  leaveLobby(roomId:string,playerid:string) {
-    return socketRequest<LobbyLeaveResponse>("lobby:dissconnect",roomId,playerid)
+  getCurrentLobby(roomId: string) {
+    return socketRequest<LobbyGetCurrentResponse>("lobby:getCurrent", roomId);
+  },
+
+  leaveLobby(roomId: string, playerid: string) {
+    return socketRequest<LobbyLeaveResponse>(
+      "lobby:dissconnect",
+      roomId,
+      playerid
+    );
   },
 
   requestJoin(roomId: string, playerid: string, password: string) {
-    return socketRequest<JoinLobbyResponse>("lobby:join",roomId,playerid,password)
+    return socketRequest<JoinLobbyResponse>(
+      "lobby:join",
+      roomId,
+      playerid,
+      password
+    );
   },
 
   updateLobbyPrivacy(
@@ -36,5 +51,9 @@ export const devDuelsService = {
       playerId,
       privacyUpdate
     );
+  },
+
+  beginGame(roomId: string) {
+    return socketRequest<GameAckResponse>("game:begin", roomId);
   },
 };
