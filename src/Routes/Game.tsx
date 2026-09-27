@@ -57,9 +57,9 @@ export function Game() {
     lives: 3,
     streak: 0,
     currentIndex: 0,
-    time: 30000,
+    time: 60000,
   });
-  const [timeLeft, setTimeLeft] = useState(30000);
+  const [timeLeft, setTimeLeft] = useState(60000);
   const [submitting, setSubmitting] = useState(false);
   const [lastResult, setLastResult] = useState<AnswerResult>(null);
   const [opponents, setOpponents] = useState<Map<string, OpponentState>>(
@@ -129,8 +129,8 @@ export function Game() {
         prevScoreRef.current = 0;
         prevStreakRef.current = 0;
         setLastResult(null);
-        setStats({ score: 0, lives: 3, streak: 0, currentIndex: 0, time: 30000 });
-        setTimeLeft(30000);
+        setStats({ score: 0, lives: 3, streak: 0, currentIndex: 0, time: 60000 });
+        setTimeLeft(60000);
       }
 
       setPhase("playing");
