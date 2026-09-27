@@ -38,6 +38,7 @@ export interface OpponentUpdate {
   userId: string;
   username: string;
   score: number;
+  streak: number;
   lives: number;
 }
 

@@ -15,6 +15,7 @@ export interface GameStatePayload {
   score: number;
   lives: number;
   currentIndex: number;
+  streak: number;
   time: number;
 }
 

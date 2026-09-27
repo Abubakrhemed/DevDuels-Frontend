@@ -68,6 +68,15 @@
   }
 }
 
+@keyframes streak-flash {
+  from { opacity: 0.3; }
+  to { opacity: 0; }
+}
+
+.animate-streak-flash {
+  animation: streak-flash 400ms ease-out forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-cursor {
     animation: none;
