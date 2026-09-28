@@ -8,6 +8,7 @@ export function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export function Register() {
 
     setIsSubmitting(true);
     try {
-      await register(username, password);
+      await register(username, password, email);
       navigate("/play");
     } catch {
       setError("could not create account, try a different username");
@@ -60,6 +61,19 @@ export function Register() {
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
+                required
+                className="mt-2 w-full rounded-md border border-border bg-bg px-3 py-2 font-display text-sm text-text placeholder:text-muted focus:border-accent"
+              />
+            </div>
+
+            <div>
+              <label className="font-display text-xs uppercase tracking-wider text-muted">
+                email
+              </label>
+              <input
+                type="text"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 className="mt-2 w-full rounded-md border border-border bg-bg px-3 py-2 font-display text-sm text-text placeholder:text-muted focus:border-accent"
               />

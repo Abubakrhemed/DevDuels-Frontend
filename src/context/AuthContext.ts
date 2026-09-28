@@ -13,7 +13,7 @@ export interface AuthContextValue {
   token: string | null;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string,email:string) => Promise<void>;
   logout: () => void;
 }
 

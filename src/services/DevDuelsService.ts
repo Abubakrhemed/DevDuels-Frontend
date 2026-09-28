@@ -9,10 +9,28 @@ import type {
   GameAckResponse,
 } from "../types/socketEvents";
 import type { LobbyPrivacy } from "../types/Lobby";
+import axios from "axios";
+import { BASE_URI } from "../config/config";
 
 export const devDuelsService = {
   createLobby(playerId: string) {
     return socketRequest<LobbyCreateResponse>("lobby:create", playerId);
+  },
+
+  async requestPasswordReset(username: string, email: string) {
+    const response = await axios.post(`${BASE_URI}/api/user/passwordReset`, {
+      username,
+      email,
+    });
+    return response.data;
+  },
+
+  async passwordReset(token: string, password: string) {
+    const response = await axios.put(`${BASE_URI}/api/user/passwordReset`, {
+      token,
+      password,
+    });
+    return response.data;
   },
 
   getAllPublicLobbies() {
@@ -27,7 +45,7 @@ export const devDuelsService = {
     return socketRequest<LobbyLeaveResponse>(
       "lobby:dissconnect",
       roomId,
-      playerid
+      playerid,
     );
   },
 
@@ -36,20 +54,20 @@ export const devDuelsService = {
       "lobby:join",
       roomId,
       playerid,
-      password
+      password,
     );
   },
 
   updateLobbyPrivacy(
     roomId: string,
     playerId: string,
-    privacyUpdate: LobbyPrivacy
+    privacyUpdate: LobbyPrivacy,
   ) {
     return socketRequest<LobbyPrivacyChangeResponse>(
       "lobby:privacyChange",
       roomId,
       playerId,
-      privacyUpdate
+      privacyUpdate,
     );
   },
 

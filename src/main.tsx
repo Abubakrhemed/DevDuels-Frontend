@@ -13,6 +13,8 @@ import {
   Profile,
   Login,
   Register,
+  PasswordReset,
+  RequestPasswordRequest
 } from "./Routes/pages";
 import { AuthProvider } from "./context/AuthProvider";
 import { PopupProvider } from "./context/PopupProvider";
@@ -20,6 +22,8 @@ import { PopupProvider } from "./context/PopupProvider";
 const router = createBrowserRouter([
   { path: "login", Component: Login },
   { path: "register", Component: Register },
+  { path: "request-password-reset", Component: RequestPasswordRequest },
+  { path: "reset-password", Component: PasswordReset },
   {
     path: "/",
     element: <App />,

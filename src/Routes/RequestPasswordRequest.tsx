@@ -1,31 +1,29 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth";
+import { Link } from "react-router";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { devDuelsService } from "../services/DevDuelsService";
 
-export function Login() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login } = useAuth();
+export function RequestPasswordRequest() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const redirectTo = (location.state as { from?: string })?.from ?? "/play";
-
-  async function handleSubmit(event: FormEvent) {
+  async function handleRequestReset(event: FormEvent) {
     event.preventDefault();
     setError(null);
-    setIsSubmitting(true);
     try {
-      await login(username, password);
-      navigate(redirectTo);
-    } catch {
-      setError("incorrect username or password");
-    } finally {
-      setIsSubmitting(false);
+      const response = await devDuelsService.requestPasswordReset(
+        username,
+        email,
+      );
+
+      if (response.message) {
+        alert(response.message);
+      }
+    } catch (err) {
+      console.log(err)
+      setError("email or username is incorrect");
     }
   }
 
@@ -41,13 +39,11 @@ export function Login() {
       <div className="flex flex-1 items-center justify-center px-6">
         <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-6 sm:p-8">
           <h1 className="font-display text-2xl font-bold text-text">
-            welcome back
+            Reset Password
           </h1>
-          <p className="mt-1 text-sm text-muted">
-            log in to challenge another developer
-          </p>
+          <p className="mt-1 text-sm text-muted">Enter Email & Username</p>
 
-          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          <form onSubmit={handleRequestReset} className="mt-6 flex flex-col gap-4">
             <div>
               <label className="font-display text-xs uppercase tracking-wider text-muted">
                 username
@@ -63,20 +59,16 @@ export function Login() {
 
             <div>
               <label className="font-display text-xs uppercase tracking-wider text-muted">
-                password
+                email
               </label>
               <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                type="text"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 className="mt-2 w-full rounded-md border border-border bg-bg px-3 py-2 font-display text-sm text-text placeholder:text-muted focus:border-accent"
               />
             </div>
-
-            <Link to="/requestPasswordReset" className="text-accent hover:underline">
-              Reset Password
-            </Link>
 
             {error && (
               <p className="font-display text-xs text-danger">{error}</p>
@@ -84,17 +76,16 @@ export function Login() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
               className="mt-2 rounded-md bg-accent px-4 py-2.5 font-display text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:opacity-60"
             >
-              {isSubmitting ? "logging in..." : "log in"}
+              Reset Password
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted">
-            don't have an account?{" "}
-            <Link to="/register" className="text-accent hover:underline">
-              sign up
+            have an account?{" "}
+            <Link to="/login" className="text-accent hover:underline">
+              login
             </Link>
           </p>
         </div>

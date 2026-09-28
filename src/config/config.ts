@@ -7,4 +7,3 @@ function requireEnv(name: string): string {
 }
 
 export const BASE_URI = requireEnv("VITE_BASE_URI");
-export const LOCAL_BASE_URI = requireEnv("VITE_BASE_URI");

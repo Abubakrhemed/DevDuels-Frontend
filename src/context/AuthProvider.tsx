@@ -39,10 +39,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  async function register(username: string, password: string) {
+  async function register(username: string, password: string,email:string) {
     await axios.post(`${BASE_URI}/api/user/register`, {
       username,
       password,
+      email
     });
     await login(username, password);
   }
