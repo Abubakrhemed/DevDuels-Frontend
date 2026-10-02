@@ -65,6 +65,13 @@ export function Navbar() {
             >
               leaderboard
             </Link>
+
+            <Link
+              to="/profile"
+              className="font-display text-sm text-muted transition-colors hover:text-text"
+            >
+              profile
+            </Link>
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
@@ -144,6 +151,13 @@ export function Navbar() {
               >
                 leaderboard
               </Link>
+
+              <Link
+                to="/profile"
+                className="font-display text-sm text-muted transition-colors hover:text-text"
+              >
+                profile
+              </Link>
               <div className="mt-2 flex flex-col gap-3 border-t border-border pt-4">
                 <Link
                   to="/login"
@@ -197,6 +211,13 @@ export function Navbar() {
             className="font-display text-sm text-muted transition-colors hover:text-text"
           >
             leaderboard
+          </button>
+
+          <button
+            onClick={() => handleNavigate("/profile")}
+            className="font-display text-sm text-muted transition-colors hover:text-text"
+          >
+            profile
           </button>
         </nav>
 
@@ -267,6 +288,12 @@ export function Navbar() {
               className="text-left font-display text-sm text-muted transition-colors hover:text-text"
             >
               leaderboard
+            </button>
+            <button
+              onClick={() => handleNavigate("/profile")}
+              className="font-display text-sm text-muted transition-colors hover:text-text"
+            >
+              profile
             </button>
             <div className="mt-2 flex flex-col gap-3 border-t border-border pt-4">
               <button
