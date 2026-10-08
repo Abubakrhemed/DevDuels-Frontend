@@ -4,7 +4,7 @@ import lottie from "lottie-web";
 import { socket } from "../socket/socket";
 import { useAuth } from "../hooks/useAuth";
 import { usePopup } from "../hooks/Usepopup";
-import fireAnimationData from "../assets/fire.json";
+import fireAnimationData from "../assets/Fire.json";
 import type { Lobby } from "../types/Lobby";
 import type {
   SafeQuestion,

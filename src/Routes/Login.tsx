@@ -74,7 +74,7 @@ export function Login() {
               />
             </div>
 
-            <Link to="/requestPasswordReset" className="text-accent hover:underline">
+            <Link to="/request-password-reset" className="text-accent hover:underline">
               Reset Password
             </Link>
 

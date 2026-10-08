@@ -1,4 +1,4 @@
-import { Navbar, Hero, Footer } from "../components/components";
+import { Hero } from "../components/components";
 
 export function Home() {
   return (
